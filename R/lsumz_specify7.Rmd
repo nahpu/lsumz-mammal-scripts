@@ -23,6 +23,8 @@ df <- readr::read_csv(path)
 
 ```{r}
 
+lsumz_cols <- "Catalog Number	Alt Catalog Number	Genus	Species	Sex	Continent	Country	State	County	Locality Name	Elevation	Elevation Unit	CollectorLastName1	Field Number	Start Date	PrepType1	PreparedDate1	Count1	TissueType1	Preservation1	StorageLocation1	PrepType2	PreparedDate2	Count2	TissueType2	Preservation2	StorageLocation2	PrepType3	PreparedDate3	Count3	TissueType3	Preservation3	StorageLocation3	PrepType4	PreparedDate4	Count4	TissueType4	Preservation4	StorageLocation4	PrepType5	PreparedDate5	Count5	TissueType5	Preservation5	StorageLocation5	PrepType6	PreparedDate6	Count6	TissueType6	Preservation6	StorageLocation6	PrepType7	PreparedDate7	Count7	TissueType7	Preservation7	StorageLocation7	PrepType8	PreparedDate8	Count8	TissueType8	Preservation8	StorageLocation8	PrepType9	PreparedDate9	Count9	TissueType9	Preservation9	StorageLocation9	PrepType10	PreparedDate10	Count10	TissueType10	Preservation10	StorageLocation10	Latitude	Longitude	MaxErrorDistance	Total Length	Tail Length	Hind Foot Length	Ear Length	Weight	Remarks"
+
 clean_collname <- function(df) {
   df |> 
     dplyr::rename(collectorLastName = cataloger) |>
