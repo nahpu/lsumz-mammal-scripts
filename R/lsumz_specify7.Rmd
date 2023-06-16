@@ -1,0 +1,34 @@
+---
+title: "NAHPU Export Data Cleaning"
+author: "Heru Handika"
+date: "2023-06-16"
+output: html_document
+---
+
+```{r}
+library(pacman)
+pacman::p_load(readr)
+pacman::p_load(dplyr)
+pacman::p_load(here)
+pacman::p_load(tidyr)
+
+```
+
+
+```{r}
+path <- here::here("data", "hh_gede2023_specimenRecords.csv")
+
+df <- readr::read_csv(path)
+```
+
+```{r}
+
+clean_collname <- function(df) {
+  df |> 
+    dplyr::rename(collectorLastName = cataloger) |>
+    tidyr::separate_wider
+}
+
+clean_collname(df)
+```
+
