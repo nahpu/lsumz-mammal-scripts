@@ -23,47 +23,90 @@ df <- readr::read_csv(path)
 
 ```{r}
 
-main.lsumz_cols <- "Catalog Number	Alt Catalog Number	Genus	Species	Sex	Continent	Country	State	County	Locality Name	Elevation	Elevation Unit	CollectorLastName1	Field Number	Start Date"
+matched.lsumz_cols <- "genus species Sex country	state	county	locality CollectorLastName	FieldNumber"
 
-prep_type.lsumz_cols <- "PrepType1	PreparedDate1	Count1	TissueType1	Preservation1	StorageLocation1	PrepType2	PreparedDate2	Count2	TissueType2	Preservation2	StorageLocation2	PrepType3	PreparedDate3	Count3	TissueType3	Preservation3	StorageLocation3	PrepType4	PreparedDate4	Count4	TissueType4	Preservation4	StorageLocation4	PrepType5	PreparedDate5	Count5	TissueType5	Preservation5	StorageLocation5	PrepType6	PreparedDate6	Count6	TissueType6	Preservation6	StorageLocation6	PrepType7	PreparedDate7	Count7	TissueType7	Preservation7	StorageLocation7	PrepType8	PreparedDate8	Count8	TissueType8	Preservation8	StorageLocation8	PrepType9	PreparedDate9	Count9	TissueType9	Preservation9	StorageLocation9	PrepType10	PreparedDate10	Count10	TissueType10	Preservation10	StorageLocation10"
+prep_types.lsumz_cols <- "PrepType	PreparedDate	Count	TissueType	Preservation	StorageLocation Notes"
 
-prep_types.lsumz_cols <- "PrepType	PreparedDate	Count	TissueType	Preservation	StorageLocation"
+measurements.lsumz_cols <- "totalLength tailLength	hindFootLength	earLength	weight remarks"
 
-coordinate.lsumz_cols <- "Latitude Longitude	MaxErrorDistance"
+col_size <- function(cols) {
+  cols |>
+    # Escape pipe so stringr does not confuse it with OR operator
+    stringr::str_count(pattern = "\\|") |> 
+    # One extra to accommodate the split
+    max() + 1 
+}
 
-measurements.lsumz_cols <- "Total Length Tail Length	Hind Foot Length	Ear Length	Weight	Remarks"
+prepType.size <- col_size(df$preparation)
 
-prepType.size <- df$preparation |>
-  # Escape pipe so stringr does not confuse it with OR operator
-  stringr::str_count(pattern = "\\|") |> 
-  # One extra to accommodate the split
-  max() + 1 
+coordinate.size <- col_size(df$coordinates)
 
 prepType.colnames <- paste0("PrepType", 1:prepType.size)
 
-prepType.allCols <- stringr::str_split(prep_types.lsumz_cols, pattern = "\t")
-prepType.allCols
+coordinates.colnames <- paste0("Coordinate", 1:coordinate.size)
 
+prepType.allCols <- unlist(stringr::str_split(prep_types.lsumz_cols, pattern = "\\s+"))
+
+prep_types.nahpu_cols <- "PrepType Preservation	Count	TissueType	StorageLocation PreparedDate	 Notes"
+
+nahpu.allCols <- unlist(stringr::str_split(prep_types.nahpu_cols, pattern = "\\s+"))
 
 clean_collname <- function(df) {
   df |> 
     dplyr::rename(collectorLastName = cataloger) |>
     dplyr::rename(species = specificEpithet) |>
+    dplyr::rename(state = stateProvince) |>
     dplyr::rename(prepType = preparation) |>
-    tidyr::unite("Locality", municipality:specificLocality, sep = ", ", remove = FALSE) |>
-    tidyr::separate_wider_delim(prepType, delim = "|", names = prepType.colnames,  too_few = "align_start")
+    tidyr::unite("locality", municipality:specificLocality, sep = ", ", remove = FALSE) |>
+    tidyr::separate_wider_delim(prepType, delim = "|", names = prepType.colnames,  too_few = "align_start") |>
+    tidyr::separate_wider_delim(coordinates, delim = "|", names = coordinates.colnames,  too_few = "align_start")
 }
 
-cleaned.df <- clean_collname(df) 
-readr::write_csv(cleaned.df, here::here("results", "cleaned_lsumz_upload.csv"))
-# 
-# test <- names(df) %>% 
-#   purrr::map_dfc(~ df %>% 
-#              select(.x) %>% 
-#              separate(.x, 
-#                       into = paste0(.x, c("_attempted", "_landed")), 
-#                       sep = ";")
-#            )
+cleaned.df <-clean_collname(df) 
+
+tissue_list <- c("Liver", "Lung", "Heart", "Muscle", "Kidney")
+
+split_prepType <- function(cols) {
+  index <- stringr::str_extract(cols, pattern = "\\d+")
+  coll_names <- paste0(nahpu.allCols, index)
+  lsu_cols<- paste0(prepType.allCols, index)
+  tissueType <- paste0("TissueType", index)
+  prepType <- paste0("PrepType", index)
+  cleaned.df |> 
+    dplyr::select("specimenUUID", cols) |>
+    tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
+    dplyr::select("specimenUUID", lsu_cols)
+}
+
+nahpu_coord.cols <- c("name", "lat/long", "elevation", "MaxErrorDistance", "datum", "gps", "notes")
+
+split_coordinate <- function(cols) {
+  coll_names <- paste0(nahpu_coord.cols, ".", cols)
+  latlong_cols <- paste0(c("Latitude", "Longitude"), ".", cols)
+  elevation <- paste0("Elevation.", cols)
+  unit <- paste0("ElevationUnit.", cols)
+  cleaned.df |>
+    dplyr::select("specimenUUID", cols) |>
+    tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
+    tidyr::separate_wider_delim(3, delim = ",", names = latlong_cols, too_few = "align_start", too_many = "merge") |>
+    tidyr::separate_wider_regex(5, c(elevation = "\\d+", unit = "\\w+"))
+}
+
+prepType.df <- prepType.colnames |>
+  purrr::map(split_prepType) |>
+  purrr::reduce(left_join, by = "specimenUUID")
+
+coordinate.df <- coordinates.colnames |>
+  purrr::map(split_coordinate) |>
+  purrr::reduce(left_join, by = "specimenUUID")
+
+final.df <- cleaned.df |>
+  dplyr::select(!starts_with(c("PrepType", "Coordinate"))) |>
+  dplyr::left_join(coordinate.df, by = "specimenUUID") |>
+  dplyr::left_join(prepType.df, by = "specimenUUID")
+
+
+readr::write_csv(final.df, here::here("results", "cleaned_lsumz_upload.csv"), na = "")
 
 ```
 
