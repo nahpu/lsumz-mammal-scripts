@@ -26,6 +26,15 @@ df <- readr::read_csv(path)
 ```
 
 ```{r}
+matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "age", "country", "state", "county", "locality", "collectorLastName", "fieldNumber")
+
+measurements.lsumz_cols <- c("totalLength", "tailLength", "hindFootLength", "earLength", "weight", "remarks")
+
+coordinates.cols <- c("Latitude", "Longitude", "Elevation", "ElevationUnit", "MaxErrorDistance")
+
+lsumz_cols <- c(matched.lsumz_cols, measurements.lsumz_cols)
+
+
 cleaned.df <-clean_collname(df) 
 
 prepType.df <- prepType.colnames |>
@@ -34,12 +43,19 @@ prepType.df <- prepType.colnames |>
 
 coordinate.df <- coordinates.colnames |>
   purrr::map(split_coordinate) |>
-  purrr::reduce(left_join, by = "specimenUUID")
+  purrr::reduce(left_join, by = "specimenUUID") |>
+  dplyr::select(specimenUUID, ends_with(".Coordinate1")) |>
+  dplyr::rename_with(~stringr::str_remove(.x, pattern = ".Coordinate1")) |>
+  dplyr::select(specimenUUID, all_of(coordinates.cols))
 
 final.df <- cleaned.df |>
-  dplyr::select(!starts_with(c("PrepType", "Coordinate"))) |>
+  dplyr::select(lsumz_cols) |>
   dplyr::left_join(coordinate.df, by = "specimenUUID") |>
-  dplyr::left_join(prepType.df, by = "specimenUUID")
+  dplyr::left_join(prepType.df, by = "specimenUUID") |>
+  dplyr::relocate(all_of(coordinates.cols), .after = last_col()) |>
+  dplyr::relocate(all_of(measurements.lsumz_cols), .after = last_col()) |>
+  dplyr::select(-specimenUUID) 
+  
 
 readr::write_csv(final.df, here::here("results", "cleaned_lsumz_upload.csv"), na = "")
 ```

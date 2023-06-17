@@ -1,10 +1,6 @@
 source(here::here("R", "common.R"))
 
-matched.lsumz_cols <- "genus species Sex country state county locality CollectorLastName FieldNumber"
-
-prep_types.lsumz_cols <- "PrepType PreparedDate Count TissueType Preservation	StorageLocation Notes"
-
-measurements.lsumz_cols <- "totalLength tailLength hindFootLength earLength weight remarks"
+gonads <- c("testisPos", "testisSize", "ovaryOpening", "mammaeCondition", "mammaeFormula")
 
 clean_collname <- function(df) {
   df |> 
@@ -12,10 +8,15 @@ clean_collname <- function(df) {
     dplyr::rename(species = specificEpithet) |>
     dplyr::rename(state = stateProvince) |>
     dplyr::rename(prepType = preparation) |>
+    dplyr::mutate(fieldNumber = stringr::str_extract(fieldID, pattern = "\\d+")) |>
     tidyr::unite("locality", municipality:specificLocality, sep = ", ", remove = FALSE) |>
     tidyr::separate_wider_delim(prepType, delim = "|", names = prepType.colnames,  too_few = "align_start") |>
-    tidyr::separate_wider_delim(coordinates, delim = "|", names = coordinates.colnames,  too_few = "align_start")
+    tidyr::separate_wider_delim(coordinates, delim = "|", names = coordinates.colnames,  too_few = "align_start") |>
+    tidyr::unite("remarks", gonads, sep = ", ", remove = FALSE, na.rm = TRUE)
 }
+
+
+prep_types.lsumz_cols <- "PrepType PreparedDate Count TissueType Preservation	StorageLocation Notes"
 
 prepType.size <- col_size(df$preparation)
 
@@ -50,11 +51,11 @@ coordinates.colnames <- paste0("Coordinate", 1:coordinate.size)
 split_coordinate <- function(cols) {
   coll_names <- paste0(nahpu_coord.cols, ".", cols)
   latlong_cols <- paste0(c("Latitude", "Longitude"), ".", cols)
-  elevation <- paste0("Elevation.", cols)
-  unit <- paste0("ElevationUnit.", cols)
   cleaned.df |>
     dplyr::select("specimenUUID", cols) |>
     tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
     tidyr::separate_wider_delim(3, delim = ",", names = latlong_cols, too_few = "align_start", too_many = "merge") |>
-    tidyr::separate_wider_regex(5, c(elevation = "\\d+", unit = "\\w+"))
+    tidyr::separate_wider_regex(5, c(elevationTemp = "\\d+", unitTemp = "\\w+")) |>
+    dplyr::rename("Elevation.{cols}" := elevationTemp) |>
+    dplyr::rename("ElevationUnit.{cols}" := unitTemp)
 }
