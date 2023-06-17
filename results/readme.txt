@@ -1,0 +1,1 @@
+This folder is for data cleaning results. Every .csv, .xls, and .xlsx will be ignore to avoid accidentally committing fieldwork data.
