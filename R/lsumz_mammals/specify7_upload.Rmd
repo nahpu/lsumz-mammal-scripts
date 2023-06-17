@@ -15,7 +15,7 @@ pacman::p_load(dplyr)
 pacman::p_load(here)
 pacman::p_load(tidyr)
 
-source(here::here("R", "lsumz_data_cleaning.R"))
+source(here::here("R", "lsumz_mammals", "data_cleaning.R"))
 ```
 
 

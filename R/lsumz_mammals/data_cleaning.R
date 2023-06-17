@@ -1,8 +1,10 @@
-matched.lsumz_cols <- "genus species Sex country	state	county	locality CollectorLastName	FieldNumber"
+source(here::here("R", "common.R"))
 
-prep_types.lsumz_cols <- "PrepType	PreparedDate	Count	TissueType	Preservation	StorageLocation Notes"
+matched.lsumz_cols <- "genus species Sex country state county locality CollectorLastName FieldNumber"
 
-measurements.lsumz_cols <- "totalLength tailLength	hindFootLength	earLength	weight remarks"
+prep_types.lsumz_cols <- "PrepType PreparedDate Count TissueType Preservation	StorageLocation Notes"
+
+measurements.lsumz_cols <- "totalLength tailLength hindFootLength earLength weight remarks"
 
 clean_collname <- function(df) {
   df |> 
@@ -15,25 +17,17 @@ clean_collname <- function(df) {
     tidyr::separate_wider_delim(coordinates, delim = "|", names = coordinates.colnames,  too_few = "align_start")
 }
 
-col_size <- function(cols) {
-  cols |>
-    # Escape pipe so stringr does not confuse it with OR operator
-    stringr::str_count(pattern = "\\|") |> 
-    # One extra to accommodate the split
-    max() + 1 
-}
-
 prepType.size <- col_size(df$preparation)
 
 tissue_list <- c("Liver", "Lung", "Heart", "Muscle", "Kidney")
 
 prep_types.nahpu_cols <- "PrepType Preservation	Count	TissueType	StorageLocation PreparedDate	 Notes"
 
-nahpu.allCols <- unlist(stringr::str_split(prep_types.nahpu_cols, pattern = "\\s+"))
+nahpu.allCols <- space_split_to_vec(prep_types.nahpu_cols)
 
 prepType.colnames <- paste0("PrepType", 1:prepType.size)
 
-prepType.allCols <- unlist(stringr::str_split(prep_types.lsumz_cols, pattern = "\\s+"))
+prepType.allCols <- space_split_to_vec(prep_types.lsumz_cols)
 
 split_prepType <- function(cols) {
   index <- stringr::str_extract(cols, pattern = "\\d+")
