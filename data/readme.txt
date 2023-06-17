@@ -1,0 +1,1 @@
+This folder hold th input data. The gitignore provides a rule to ignore any .csv, .xls, and .xlsx, so that we don't accidentally publish fieldwork data that NAHPU generated.
