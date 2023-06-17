@@ -161,4 +161,8 @@ cython_debug/
 .Rproj.user
 .Rhistory
 
+*.csv
+*.xlsx
+*.xls
+
 results/
