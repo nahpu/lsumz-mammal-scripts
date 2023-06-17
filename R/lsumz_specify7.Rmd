@@ -55,14 +55,15 @@ clean_collname <- function(df) {
 }
 
 cleaned.df <- clean_collname(df) 
-
-test <- names(df) %>% 
-  purrr::map_dfc(~ df %>% 
-             select(.x) %>% 
-             separate(.x, 
-                      into = paste0(.x, c("_attempted", "_landed")), 
-                      sep = ";")
-           )
+readr::write_csv(cleaned.df, here::here("results", "cleaned_lsumz_upload.csv"))
+# 
+# test <- names(df) %>% 
+#   purrr::map_dfc(~ df %>% 
+#              select(.x) %>% 
+#              separate(.x, 
+#                       into = paste0(.x, c("_attempted", "_landed")), 
+#                       sep = ";")
+#            )
 
 ```
 
