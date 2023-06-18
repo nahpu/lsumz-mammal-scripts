@@ -31,7 +31,7 @@ df <- readr::read_csv(path)
 ```
 ## 3. Parse Data to Match LSUMZ Mammal Database
 
-LSUMZ mammal use specify7 to manage the museum database. First, we will define the matching column name between nahpu output and specify7 input. For most column, it is straightforward. For coordinate and specimen part, we need to parse it first. We handle this separately by subsetting the dataset into separate data frames and keep specimenUUID as a key. Later, we will merge data frames with the rest of the records.
+LSUMZ mammal use specify7 to manage the museum database. First, we will define the matching column names between nahpu output and specify7 input. For most column, it is straightforward. For coordinate and specimen part, we need to parse it first. We handle this separately by sub-setting the data set into separate data frames and keep specimenUUID as a key. Later, we will merge data frames with the rest of the records.
 
 ### Parsing specimen part
 Nahpu current version write part into a single column. Each part is separated by pipe (|) symbol. Within the part, each field is written separated by semicolon (;) and label by the field name with colon (:). For instance: type: Alcohol; count: 1; treatment: Formalin.
@@ -54,7 +54,7 @@ We select all the relevant LSUMZ columns from our main data frame. Then, merge i
 
 ### Exporting final dataframes
 
-We use readr to save the final dataframe to csv and write null values as and empty column.
+We use readr to save the final data frame to csv and write null values as and empty column.
 
 ```{r}
 matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "age", "country", "state", "county", "locality", "collectorLastName", "fieldNumber")
