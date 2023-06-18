@@ -36,9 +36,11 @@ LSUMZ mammal use specify7 to manage the museum database. First, we will define t
 ### Parsing specimen part
 Nahpu current version write part into a single column. Each part is separated by pipe (|) symbol. Within the part, each field is written separated by semicolon (;) and label by the field name with colon (:). For instance: type: Alcohol; count: 1; treatment: Formalin.
 
+Nahpu only writes non-empty field with the exception of part type, count, and treatment. These records will be filled with "Unknown" if users does not input the data. 
+
 Nahpu column order comes with tissueID and barcodeID first. Because LSUMZ mammal record does not use TissueID nor barcodeID, we ignore those two records when parsing the file. The specific implementation of parsing function is in the data_cleaning.R module, which we load above.
 
-At the higher level, we will split the part first, then the field within the part. We perform part splitting while cleaning column names. Whereas within part splitting is happened after we cleaned the column names.
+At the higher level, we will split the part first, then the field within the part. We perform part splitting when cleaning column names. Whereas within part splitting is happened after we cleaned the column names.
 
 ### Parsing coordinate
 
