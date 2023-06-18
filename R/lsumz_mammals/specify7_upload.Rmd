@@ -5,6 +5,10 @@ date: "2023-06-16"
 output: html_document
 ---
 
+## 1. Load required packages and module
+
+We use pacman because it is easier to handle missing packages.
+
 ```{r}
 if (!require("pacman")) {
   install.packages("pacman")
@@ -18,12 +22,37 @@ pacman::p_load(tidyr)
 source(here::here("R", "lsumz_mammals", "data_cleaning.R"))
 ```
 
+## 2. Read Nahpu Specimen Record output
 
 ```{r}
 path <- here::here("data", "hh_gede2023_specimenRecords.csv")
 
 df <- readr::read_csv(path)
 ```
+## 3. Parse Data to Match LSUMZ Mammal Database
+
+LSUMZ mammal use specify7 to manage the museum database. First, we will define the matching column name between nahpu output and specify7 input. For most column, it is straightforward. For coordinate and specimen part, we need to parse it first. We handle this separately by subsetting the dataset into separate data frames and keep specimenUUID as a key. Later, we will merge data frames with the rest of the records.
+
+### Parsing specimen part
+Nahpu current version write part into a single column. Each part is separated by pipe (|) symbol. Within the part, each field is written separated by semicolon (;) and label by the field name with colon (:). For instance: type: Alcohol; count: 1; treatment: Formalin.
+
+Nahpu column order comes with tissueID and barcodeID first. Because LSUMZ mammal record does not use TissueID nor barcodeID, we ignore those two records when parsing the file. The specific implementation of parsing function is in the data_cleaning.R module, which we load above.
+
+At the higher level, we will split the part first, then the field within the part. We perform part splitting while cleaning column names. Whereas within part splitting is happened after we cleaned the column names.
+
+### Parsing coordinate
+
+Newer Nahpu version has coordinate field in capture record for the specimen. If users input this field, parsing coordinate records should be straightforward. We only need to split within field records. Future implementation will also split the fields, so that no parsing is required.
+
+For this example, we will parse the coordinate from the site records. The format is similar to the specimen part. Among coordinate records, Nahpu writes with pipe (|) separator and within each one of it using semicolon (;). Hence, the parsing algorithm is similar to the specimen part.
+
+### Merging dataframes
+
+We select all the relevant LSUMZ columns from our main data frame. Then, merge it with coordinate and part data frames by using specimenUUID as a key.
+
+### Exporting final dataframes
+
+We use readr to save the final dataframe to csv and write null values as and empty column.
 
 ```{r}
 matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "age", "country", "state", "county", "locality", "collectorLastName", "fieldNumber")
