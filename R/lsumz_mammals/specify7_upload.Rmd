@@ -55,7 +55,6 @@ final.df <- cleaned.df |>
   dplyr::relocate(all_of(coordinates.cols), .after = last_col()) |>
   dplyr::relocate(all_of(measurements.lsumz_cols), .after = last_col()) |>
   dplyr::select(-specimenUUID) 
-  
 
 readr::write_csv(final.df, here::here("results", "cleaned_lsumz_upload.csv"), na = "")
 ```

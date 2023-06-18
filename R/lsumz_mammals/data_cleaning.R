@@ -22,7 +22,7 @@ prepType.size <- col_size(df$preparation)
 
 tissue_list <- c("Liver", "Lung", "Heart", "Muscle", "Kidney")
 
-prep_types.nahpu_cols <- "PrepType Preservation	Count	TissueType	StorageLocation PreparedDate	 Notes"
+prep_types.nahpu_cols <- "PrepType Count Preservation	TissueType StorageLocation PreparedDate Notes"
 
 nahpu.allCols <- space_split_to_vec(prep_types.nahpu_cols)
 
@@ -33,14 +33,16 @@ prepType.allCols <- space_split_to_vec(prep_types.lsumz_cols)
 split_prepType <- function(cols) {
   index <- stringr::str_extract(cols, pattern = "\\d+")
   coll_names <- paste0(nahpu.allCols, index)
-  lsu_cols<- paste0(prepType.allCols, index)
-  tissueType <- paste0("TissueType", index)
+  count <- paste0("Count", index)
   prepType <- paste0("PrepType", index)
+  tissueType <- paste0("TissueType", index)
   cleaned.df |> 
     dplyr::select("specimenUUID", cols) |>
     tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
-    dplyr::select("specimenUUID", lsu_cols)
+    dplyr::select("specimenUUID", !starts_with("Notes")) |>
+    dplyr::mutate("TissueType{index}" := ifelse(is.na(!!sym(tissueType)) & tissue_list %in% !!sym(prepType), !!sym(prepType), ""))
 }
+
 
 nahpu_coord.cols <- c("name", "lat/long", "elevation", "MaxErrorDistance", "datum", "gps", "notes")
 
