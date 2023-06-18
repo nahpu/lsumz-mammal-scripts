@@ -15,18 +15,13 @@ clean_collname <- function(df) {
     tidyr::unite("remarks", gonads, sep = ", ", remove = FALSE, na.rm = TRUE)
 }
 
-
 prep_types.lsumz_cols <- "PrepType PreparedDate Count TissueType Preservation	StorageLocation Notes"
 
-prepType.size <- col_size(df$preparation)
-
-tissue_list <- c("Liver", "Lung", "Heart", "Muscle", "Kidney")
+tissue_list <- c("Brain", "Liver", "Lung", "Heart", "Muscle", "Kidney", "Mammary", "Spleen", "Tongue")
 
 prep_types.nahpu_cols <- "PrepType Count Preservation	TissueType StorageLocation PreparedDate Notes"
 
 nahpu.allCols <- space_split_to_vec(prep_types.nahpu_cols)
-
-prepType.colnames <- paste0("PrepType", 1:prepType.size)
 
 prepType.allCols <- space_split_to_vec(prep_types.lsumz_cols)
 
@@ -40,15 +35,11 @@ split_prepType <- function(cols) {
     dplyr::select("specimenUUID", cols) |>
     tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
     dplyr::select("specimenUUID", !starts_with("Notes")) |>
-    dplyr::mutate("TissueType{index}" := ifelse(is.na(!!sym(tissueType)) & tissue_list %in% !!sym(prepType), !!sym(prepType), ""))
+    dplyr::mutate("TissueType{index}" := ifelse(is.na(!!sym(tissueType)) & !!sym(prepType) %in% tissue_list, !!sym(prepType), "")) |>
+    dplyr::mutate("PrepType{index}" := ifelse(!!sym(prepType) %in% tissue_list, "Tissue" , !!sym(prepType)))
 }
 
-
 nahpu_coord.cols <- c("name", "lat/long", "elevation", "MaxErrorDistance", "datum", "gps", "notes")
-
-coordinate.size <- col_size(df$coordinates)
-
-coordinates.colnames <- paste0("Coordinate", 1:coordinate.size)
 
 split_coordinate <- function(cols) {
   coll_names <- paste0(nahpu_coord.cols, ".", cols)

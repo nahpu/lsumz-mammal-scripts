@@ -34,6 +34,13 @@ coordinates.cols <- c("Latitude", "Longitude", "Elevation", "ElevationUnit", "Ma
 
 lsumz_cols <- c(matched.lsumz_cols, measurements.lsumz_cols)
 
+prepType.size <- col_size(df$preparation)
+
+prepType.colnames <- paste0("PrepType", 1:prepType.size)
+
+coordinate.size <- col_size(df$coordinates)
+
+coordinates.colnames <- paste0("Coordinate", 1:coordinate.size)
 
 cleaned.df <-clean_collname(df) 
 
@@ -49,7 +56,7 @@ coordinate.df <- coordinates.colnames |>
   dplyr::select(specimenUUID, all_of(coordinates.cols))
 
 final.df <- cleaned.df |>
-  dplyr::select(lsumz_cols) |>
+  dplyr::select(all_of(lsumz_cols)) |>
   dplyr::left_join(coordinate.df, by = "specimenUUID") |>
   dplyr::left_join(prepType.df, by = "specimenUUID") |>
   dplyr::relocate(all_of(coordinates.cols), .after = last_col()) |>
