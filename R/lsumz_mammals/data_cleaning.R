@@ -44,16 +44,17 @@ split_prepType <- function(cols) {
   initial_cols <- c("specimenUUID", tissueType, preparedDate, storageLocation)
   lsumz_cols <- c("specimenUUID", prepType, tissueType, preservation, count, preparedDate, storageLocation)
   cleaned.df |> 
-    dplyr::mutate("PreparedDate{index}" := preparationDate ) |>
+    dplyr::mutate("PreparedDate{index}" := '') |>
     dplyr::mutate("StorageLocation{index}" := '') |>
     dplyr::mutate("TissueType{index}" := '') |>
-    dplyr::select(cols, all_of(initial_cols)) |> 
+    dplyr::select(cols, preparationDate, all_of(initial_cols)) |> 
     tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
     # Remove MZB tissues
     dplyr::mutate(across(everything(), ~stringr::str_remove(.x, pattern = "museumPermanent: MZB"))) |>
     ## Nahpu label the specimen part data for easy reading
     ## We remove it here for specify input
     dplyr::mutate(across(everything(), ~stringr::str_remove(.x, pattern = "(\\w+:\\s)"))) |>
+    dplyr::mutate("PreparedDate{index}" := ifelse(!is.na(!!sym(prepType)) | !!sym(prepType) == '', preparationDate, "")) |>
     dplyr::mutate("TissueType{index}" := ifelse(is.na(!!sym(tissueType)) | !!sym(prepType) %in% tissue_list, !!sym(prepType), "")) |>
     dplyr::mutate("PrepType{index}" := ifelse(!!sym(prepType) %in% tissue_list, "Tissue" , !!sym(prepType))) |>
     dplyr::select(all_of(lsumz_cols))

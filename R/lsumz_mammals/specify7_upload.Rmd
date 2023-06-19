@@ -59,7 +59,7 @@ We use readr to save the final data frame to csv and write null values as and em
 ```{r}
 matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "age", "country", "state", "county", "locality", "collectorLastName", "fieldNumber")
 
-measurements.lsumz_cols <- c("totalLength", "tailLength", "hindFootLength", "earLength", "weight", "remarks")
+measurements.lsumz_cols <- c("totalLength", "tailLength", "hindFootLength", "earLength", "weight", "accuracy", "remarks")
 
 coordinates.cols <- c("Latitude", "Longitude", "Elevation", "ElevationUnit", "MaxErrorDistance")
 
@@ -92,7 +92,9 @@ final.df <- cleaned.df |>
   dplyr::left_join(prepType.df, by = "specimenUUID") |>
   dplyr::relocate(all_of(coordinates.cols), .after = last_col()) |>
   dplyr::relocate(all_of(measurements.lsumz_cols), .after = last_col()) |>
-  dplyr::select(-specimenUUID) 
+  dplyr::select(-specimenUUID) |>
+  # Nahpu put unknown for an empty required part fields. We empty it here.
+  dplyr::mutate(across(everything(), ~stringr::str_replace_all(.x, pattern = "Unknown", "")))
 
 readr::write_csv(final.df, here::here("results", "cleaned_lsumz_upload.csv"), na = "")
 ```
