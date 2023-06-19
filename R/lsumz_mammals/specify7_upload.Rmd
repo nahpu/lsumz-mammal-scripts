@@ -57,7 +57,7 @@ We select all the relevant LSUMZ columns from our main data frame. Then, merge i
 We use readr to save the final data frame to csv and write null values as and empty column.
 
 ```{r}
-matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "age", "country", "state", "county", "locality", "collectorLastName", "fieldNumber")
+matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "stage", "country", "state", "county", "locality", "collectorLastName", "fieldNumber", "preparationDate")
 
 measurements.lsumz_cols <- c("totalLength", "tailLength", "hindFootLength", "earLength", "weight", "accuracy", "remarks")
 
@@ -90,6 +90,7 @@ final.df <- cleaned.df |>
   dplyr::select(all_of(lsumz_cols)) |>
   dplyr::left_join(coordinate.df, by = "specimenUUID") |>
   dplyr::left_join(prepType.df, by = "specimenUUID") |>
+  dplyr::mutate(across(everything(), ~stringr::str_replace_all(.x, pattern = "LN2", "Frozen"))) |>
   dplyr::relocate(all_of(coordinates.cols), .after = last_col()) |>
   dplyr::relocate(all_of(measurements.lsumz_cols), .after = last_col()) |>
   dplyr::select(-specimenUUID) |>

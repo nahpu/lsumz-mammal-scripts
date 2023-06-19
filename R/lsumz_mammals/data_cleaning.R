@@ -8,6 +8,7 @@ clean_collname <- function(df) {
     dplyr::rename(species = specificEpithet) |>
     dplyr::rename(state = stateProvince) |>
     dplyr::rename(prepType = preparation) |>
+    dplyr::rename(stage = age) |>
     tidyr::unite("locality", municipality:specificLocality, sep = ", ", remove = FALSE) |>
     tidyr::separate_wider_delim(prepType, delim = "|", names = prepType.colnames,  too_few = "align_start") |>
     tidyr::separate_wider_delim(coordinates, delim = "|", names = coordinates.colnames,  too_few = "align_start") |>
