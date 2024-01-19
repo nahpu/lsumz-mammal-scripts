@@ -24,8 +24,9 @@ source(here::here("R", "lsumz_mammals", "data_cleaning.R"))
 
 ## 2. Read Nahpu Specimen Record output
 
+Match the file name with the file in the data folder.
 ```{r}
-path <- here::here("data", "hh_gede2023_specimenRecords.csv")
+path <- here::here("data", "specimen_records.csv")
 
 df <- readr::read_csv(path)
 ```
