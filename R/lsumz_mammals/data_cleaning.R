@@ -70,7 +70,7 @@ split_coordinate <- function(cols) {
     dplyr::select("specimenUUID", cols) |>
     tidyr::separate_wider_delim(cols, delim = ";", names = coll_names, too_few = "align_start", too_many = "merge") |>
     tidyr::separate_wider_delim(3, delim = ",", names = latlong_cols, too_few = "align_start", too_many = "merge") |>
-    tidyr::separate_wider_regex(5, c(elevationTemp = "\\d+", unitTemp = "\\w+")) |>
+    tidyr::separate_wider_regex(5, c(elevationTemp = "\\d+\\.?\\d+", unitTemp = "\\w+")) |>
     dplyr::rename("Elevation.{cols}" := elevationTemp) |>
     dplyr::rename("ElevationUnit.{cols}" := unitTemp)
 }
