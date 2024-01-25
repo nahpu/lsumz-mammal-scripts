@@ -7,7 +7,7 @@ output: html_document
 
 ## 1. Load required packages and module
 
-We use pacman because it provides easy function to handle missing packages.
+We use the new R pipe '|>" in the scripts. Make sure you have an R version 4.1 or higher. Your console should show the R version you use. To load the library, we use pacman because it provides easy function to handle missing packages.
 
 ```{r}
 if (!require("pacman")) {

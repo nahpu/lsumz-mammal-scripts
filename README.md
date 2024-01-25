@@ -4,10 +4,10 @@ Scripts to clean NAHPU export data.
 ## Requirements
 
 1. RStudio
-2. R interpreter
+2. R interpreter v4.1.0+
 3. Terminal app (optional)
 4. GitHub account (optional)
-5. GH Cli (optional)
+5. GH CLI (optional)
 6. Git (optional)
 
 ## Steps
