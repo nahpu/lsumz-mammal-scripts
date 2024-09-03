@@ -3,7 +3,7 @@ col_size <- function(cols) {
     # Escape pipe so stringr does not confuse it with OR operator
     stringr::str_count(pattern = "\\|") |> 
     # One extra to accommodate the split
-    max() + 1 
+    max(na.rm = TRUE) + 1 
 }
 
 space_split_to_vec <- function(str) {
