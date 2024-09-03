@@ -58,14 +58,19 @@ We select all the relevant LSUMZ columns from our main data frame. Then, merge i
 We use readr to save the final data frame to csv and write null values as and empty column.
 
 ```{r}
+# These are the list ofcommon nahpu columns that match LSUMZ Specify columns. 
+# LSUMZ does not keep specimenUUID, 
 matched.lsumz_cols <- c("specimenUUID", "genus", "species", "sex", "stage", "country", "state", "county", "locality", "collectorLastName", "fieldNumber", "preparationDate")
 
+# The same as matched.lsumz_cols but for measurements.
 measurements.lsumz_cols <- c("totalLength", "tailLength", "hindFootLength", "earLength", "weight", "accuracy", "remarks")
 
+# Coordinate columns that matches LSUMZ Specify column
 coordinates.cols <- c("Latitude", "Longitude", "Elevation", "ElevationUnit", "MaxErrorDistance")
 
 lsumz_cols <- c(matched.lsumz_cols, measurements.lsumz_cols)
 
+# We check the number of 
 prepType.size <- col_size(df$preparation)
 
 prepType.colnames <- paste0("PrepType", 1:prepType.size)
