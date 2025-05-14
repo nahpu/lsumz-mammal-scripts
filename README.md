@@ -1,6 +1,6 @@
 # nahpu-scripts
 Scripts to clean and reshape NAHPU export data to align with Specify's comma-delimited (CSV) batch import format. 
-It takes a second to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
+It takes seconds to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
 
 > **Notes**  
 > The scripts are fine-tuned to match the input format of the [LSMNS](https://www.lsu.edu/mns/index.php) Mammal database.  
