@@ -1,5 +1,5 @@
 # nahpu-scripts
-Scripts to clean and reshape NAHPU export data to align with Specify's comma-delimited (CSV) batch import format of the LSUMNS Mammal database. It takes a second to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
+Scripts to clean and reshape NAHPU export data to align with Specify's comma-delimited (CSV) batch import format. The scripts are fine-tuned to match the input format of the [LSMNS](https://www.lsu.edu/mns/index.php) Mammal database. It takes a second to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ Scripts to clean and reshape NAHPU export data to align with Specify's comma-del
 
 You can manually download it from the GitHub repo page or use [gh cli](https://cli.github.com/).
 
-If you are using gh cli. After you authenticate your github login. Do:
+If you are using gh cli. After you authenticate your GitHub login, do:
 
 ```
 gh repo clone hhandika/nahpu-scripts
@@ -38,7 +38,7 @@ After you export `NAHPU` specimen records, add the CSV file to the `data` folder
 
 ### 4. Open `nahpu-scripts.Rproj` in RStudio
 
-We recommend doing this to ensure that the path works as expected when running the script. We use the r-package [`here`]() to provide cross-platform file paths.
+We recommend doing this to ensure that the path works as expected when running the script. We use the R package [`here`]() to provide cross-platform file paths.
 
 ### 5. Open `specify7_upload.Rmd`
 
