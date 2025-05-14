@@ -1,5 +1,5 @@
 # nahpu-scripts
-Scripts to clean NAHPU export data. 
+Scripts to clean and reshape NAHPU export data to align with Specify's comma-delimited (CSV) batch import format of the LSUMNS Mammal database. It takes a second to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
 
 ## Requirements
 
@@ -30,15 +30,15 @@ git clone https://github.com/hhandika/nahpu-scripts.git
 
 ### 2. Export `NAHPU` specimen record.
 
-On Nahpu, open the project data. Then, go to the menu. Select export records. In the export record page, change the `Record type` to `Specimen Records`, `Taxon group` to `Mammals`, `Format` to `.csv`. Feel free to name it how ever make sense to you.
+On Nahpu, open the project data. Then, go to the menu. Select export records. In the export record page, change the `Record type` to `Specimen Records`, `Taxon group` to `Mammals`, `Format` to `.csv`. Feel free to name it however makes sense to you.
 
 ### 3. Add `specimen_record.csv` 
 
-After you export `NAHPU` specimen records. Add the csv file to `data` folder in the `nahpu-script` directory. Read the `readme.txt` file inside to folder to understand how git handle the file in the folder.
+After you export `NAHPU` specimen records, add the CSV file to the `data` folder in the `nahpu-script` directory. Read the `readme.txt` file inside the folder to understand how git handles the file in the folder.
 
 ### 4. Open `nahpu-scripts.Rproj` in RStudio
 
-We recommend doing this to ensure that the path works as expected when running the script. We use r-package [`here`]() to provide closs-platform file paths.
+We recommend doing this to ensure that the path works as expected when running the script. We use the r-package [`here`]() to provide cross-platform file paths.
 
 ### 5. Open `specify7_upload.Rmd`
 
@@ -50,13 +50,13 @@ The only part of the script you need to change is the file name of the input fil
 
 ### 7. Execute the script
 
-Follow the instruction to execute the script in the `specify7_upload.Rmd` file
+Follow the instructions to execute the script in the `specify7_upload.Rmd` file
 
 ### 8. Inspect the results
 
-The resulting file is stored in the `results` folder. We recommend to do final check in the file. By default, `NAHPU` only put measurement in bracket for tail crop measurements. Other inaccuracy will be left as without bracket. Match the bracket with the accuracy note. Future `NAHPU` update is planned to match the bracket based on the inaccuracy noted by the users.
+The resulting file is stored in the `results` folder. We recommend doing a final check of the file. By default, `NAHPU` only puts measurements in brackets for tail crop measurements. Other inaccuracies will be left without brackets. Match the bracket with the accuracy note. A future `NAHPU` update is planned to match the bracket based on the inaccuracies noted by the users.
 
 ### 9. Upload to Specify
 
-Ask the PI. :stuck_out_tongue_winking_eye:
+Ask the curator or the collection manager. :stuck_out_tongue_winking_eye:
 
