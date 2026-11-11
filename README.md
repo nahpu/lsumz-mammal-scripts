@@ -1,12 +1,20 @@
-# nahpu-scripts
-Scripts to clean and reshape NAHPU export data to align with Specify's comma-delimited (CSV) batch import format. 
-It takes seconds to run. However, the automated process to incorporate tissue locations has not yet been implemented. It's done manually for now.
+# lsumz-nahpu-scripts
+
+> [!WARNING]
+> **This repository is archived and no longer maintained.** It is kept for
+> reference only. Use
+> [lsumz-mammal-specify-frictionless](https://github.com/nahpu/lsumz-mammal-specify-frictionless)
+> instead. It converts NAHPU Data Packages to the LSUMZ Specify Workbench
+> format in Python or R, and includes tissue locations.
+
+Scripts to clean and reshape older NAHPU export data to align with Specify's
+comma-delimited (CSV) batch import format. They take seconds to run, but they
+do not fill in tissue locations; those had to be added manually.
 
 > **Notes**  
-> The scripts are fine-tuned to match the input format of the [LSMNS](https://www.lsu.edu/mns/index.php) Mammal database.  
-> Feel free to modify them to fit your CSV input format.  
->  
-> If you need assistance or are interested in sharing updates in the NAHPU GitHub repository, please don't hesitate to contact us!
+> The scripts were fine-tuned to match the input format of the
+> [LSMNS](https://www.lsu.edu/mns/index.php) Mammal database.  
+> They may not work with exports from current NAHPU versions.
 
 ## Requirements
 
